@@ -1,0 +1,4 @@
+sqlalchemy-cockroachdb
+psycopg2-binary
+SQLAlchemy
+flake8

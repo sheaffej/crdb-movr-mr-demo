@@ -1,0 +1,12 @@
+*.pyc
+flaskenv/*
+.vscode/*
+.devcontainer
+.vscode
+*.lock
+.idea/*
+certs/
+movr.yaml
+run/docker.sh
+notes.private.txt
+.DS_Store
