@@ -17,7 +17,9 @@ Assuming each terminal has it's current working directory at the root of this re
 
 **Top-left (controller terminal)**
 
-This will launch and prepare the cluster and the application servers
+For `roachprod` to work, you need to modify the `CLUSTER` variable in the file `demo.env`.
+
+Run these command in this termina to launch and prepare the cluster and the application servers:
 ```
 source demo.env
 run/init_demo.sh
@@ -25,7 +27,7 @@ run/init_demo.sh
 
 **Bottom-left (West/OR app)**
 
-SSH into the app server in that region (i.e. the 4th server in that region)
+SSH into the app server in that region (i.e. the 4th server in that region):
 ```
 source demo.env
 roachprod ssh $CLUSTER:8
@@ -38,9 +40,8 @@ crdb-movr-demo/demo.py
 
 **Bottom-right (East/SC app)**
 
-SSH into the app server in that region (i.e. the 4th server in that region)
+SSH into the app server in that region (i.e. the 4th server in that region):
 ```
-cd code-projects/crdb-movr-demo
 source demo.env
 roachprod ssh $CLUSTER:16
 ```

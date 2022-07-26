@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
 
-# CLUSTER=j4-appl-mr-demo
-# LIFETIME="12h0m0s"
-# MACHINE="n2-standard-2"
-# RELEASE="v21.2.10"
-# ZONES="us-west3-b,us-west1-b,us-east4-b,us-east1-b"
-# NODES=16
-
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-source ${MYDIR}/../demo.env
+PROJECT_DIR=${MYDIR}/../..
+source ${PROJECT_DIR}/demo.env
 
 # Launching 16 nodes with 4 zones
 # puts 4 nodes in each of the 4 zones,
@@ -65,7 +58,7 @@ function push_haproxy_cfg () {
     # Put haproxy.cfg in /etc/haproxy/haproxy.cfg
     echo "---------- Building configuration for driver ${driver} --------"
     CFG="/tmp/haproxy.cfg.${driver}"
-    cp $MYDIR/../haproxy.cfg.template ${CFG}
+    cp ${PROJECT_DIR}/haproxy.cfg.template ${CFG}
     for ip in `roachprod ip $CLUSTER:${nodes}`; do
         echo "    server cockroach-$ip $ip:26257 check port 26258" >> ${CFG}
     done
