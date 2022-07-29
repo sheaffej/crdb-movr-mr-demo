@@ -17,9 +17,16 @@ Assuming each terminal has it's current working directory at the root of this re
 
 **Top-left (controller terminal)**
 
-For `roachprod` to work, you need to modify the `CLUSTER` variable in the file `demo.env`.
+For `roachprod` to work, you need to modify the `CLUSTER` variable in the file `demo.env`:
+```
+# You must change this for roachprod to work
+CLUSTER=j4-movr-mr-demo
 
-Run these command in this termina to launch and prepare the cluster and the application servers:
+...
+...
+```
+
+Run these command in this terminal to launch and prepare the cluster and the application servers:
 ```
 source demo.env
 run/init_demo.sh
