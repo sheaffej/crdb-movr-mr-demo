@@ -112,8 +112,8 @@ class DemoStats():
             print()
             print('Regional tables (rides)')
             print(f"  reads:  {regional_reads_ms:>8.2f} ms avg")
-            print(f"  AOST:   {regional_aost_reads_ms:>8.2f} ms avg")
             print(f"  writes: {regional_writes_ms:>8.2f} ms avg")
+            print(f"  AOST:   {regional_aost_reads_ms:>8.2f} ms avg")
             # print(f"OP_INSERT_RIDE: {self.stats_objs[DemoStats.OP_INSERT_RIDE].last_ms_avg}")
             # print(f"OP_UPDATE_RIDE: {self.stats_objs[DemoStats.OP_UPDATE~~_RIDE].last_ms_avg}")
             print()
@@ -152,21 +152,11 @@ def run_transaction(db_engine: SAEngine, txn_func, max_retries=10):
                 result = txn_func(conn)
                 return result
 
+        # except DatabaseError as e:
         except DatabaseError as e:
             if max_retries is not None and retry_count >= max_retries:
                 raise
             retry_count += 1
-
-            # Broken connection will be
-            # -------------------------
-            # Execption <class 'sqlalchemy.exc.OperationalError'>
-            # Orig execption <class 'psycopg2.OperationalError'>
-            # PG error #: None
-            if isinstance(e.orig, psycopg2.OperationalError) and e.orig.pgcode is None:
-                print("Connection lost, attempting to reconnect...")
-                retry_count = 0   # try indefinitely
-                sleep(1)
-                continue
 
             # Transaction isolation error will be
             # -----------------------------------
@@ -179,8 +169,18 @@ def run_transaction(db_engine: SAEngine, txn_func, max_retries=10):
             # Execption <class 'sqlalchemy.exc.OperationalError'>
             # Orig execption <class 'psycopg2.errors.StatementCompletionUnknown'>
             # PG error #: 40003
-            elif isinstance(e.orig, psycopg2.OperationalError) and e.orig.pgcode is not None:
+            if isinstance(e.orig, psycopg2.OperationalError) and e.orig.pgcode in ['40001', '40003']:
                 print(f"Retrying {retry_count}/{max_retries} on PG error # {e.orig.pgcode}")
+                continue
+
+            # If PG error is NONE or some other number, sleep 1 second then continue indefinitely
+            elif isinstance(e.orig, psycopg2.OperationalError):
+                pg_code = ''
+                if e.orig.pgcode is not None:
+                    pg_code = f" (PG Error: {e.orig.pgcode})"
+                print(f"Connection lost, attempting to reconnect...{pg_code}")
+                retry_count = 0   # try indefinitely
+                sleep(1)
                 continue
 
             # Raise everything else
