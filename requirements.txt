@@ -1,4 +1,4 @@
-sqlalchemy-cockroachdb
+sqlalchemy-cockroachdb==1.4.4
 psycopg2-binary
-SQLAlchemy
+SQLAlchemy==1.4.46
 flake8
